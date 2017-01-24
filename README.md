@@ -18,9 +18,11 @@ Please consult this article on [how to build and submit assignments for CS 184](
 
 
 ### What you will turn in
-You will submit your entire project directory in a *zip* file. This should include a *website* directory containing a web-ready assignment write-up in a file *index.html*. Most parts of the assignment have **Deliverables** specified, which will be *png* and *svg* files along with various textual descriptions. You should accumulate these deliverables into sections in your webpage write-up as you go through the assignment. There are a few open-ended deliverables, and the quality of your explanations is just as important as your output images, especially when you are trying for extra credit! We want you to demonstrate a lucid understanding of what you have implemented. See the write-up guidelines and deliverables section below.
+You will submit your entire project directory in a *zip* file. This should include a *website* directory containing a web-ready assignment write-up in a file *index.html*.
 
-*Note: Do not squander all your hard work on this assignment by converting your png files into jpg or any other format!* Leave the screenshots as they are saved by the `'S'` key in the GUI, otherwise you will introduce artifacts that will ruin your rasterization efforts. You can see these effects in the *jpg* images on this write-up page (which means, as a result, you should not use these for pixel-to-pixel comparisons!).
+As you go through the assignment, refer to the write-up guidelines and deliverables section below. It is recommended that you accumulate deliverables into sections in your webpage write-up as you work through the project.
+
+*Note: Do not squander all your hard work on this assignment by converting your png files into jpg or any other format!* Leave the screenshots as they are saved by the `'S'` key in the GUI, otherwise you will introduce artifacts that will ruin your rasterization efforts.
 
 <img src="/cs184_sp16_content/article_images/3_7.jpg" width="800px" align="middle"/>
 

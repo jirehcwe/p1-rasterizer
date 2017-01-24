@@ -12,7 +12,7 @@ In this assignment you will implement a simple rasterizer, including features li
 
 You can either download the zipped assignment straight to your computer or clone it from GitHub using the command
 
-    $ git clone ???
+    $ git clone https://gitlab.com/cs184/proj1_rasterizer.git
 
 Please consult this article on [how to build and submit assignments for CS 184](classarticle:7).
 

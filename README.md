@@ -56,23 +56,27 @@ If you load a directory with up to 9 files, you can switch between them using th
 The project has 7 parts, divided into 3 sections, worth a total of 100 possible points. Some require only a few lines of code, while others are more substantial.
 
 **Section I: Rasterization (suggested completion checkpoint: Sunday 1/29)**
-1. Rasterizing single-color triangles (15 pts)
-2. Antialiasing triangles (15 pts)
-3. Transforms (10 pts)
+
+* Part 1: Rasterizing single-color triangles (15 pts)
+* Part 2: Antialiasing triangles (15 pts)
+* Part 3: Transforms (10 pts)
 
 **Section II: Sampling**
-4. Barycentric coordinates (10 pts)
-5. "Pixel sampling" for texture mapping (15 pts)
-6. "Level sampling" with mipmaps for texture mapping (25 pts)
+
+* Part 4: Barycentric coordinates (10 pts)
+* Part 5: "Pixel sampling" for texture mapping (15 pts)
+* Part 6: "Level sampling" with mipmaps for texture mapping (25 pts)
 
 **Section III: (optional, possible extra credit) Art Competition**
-7. Draw something interesting!
+
+* Part 7: Draw something interesting!
 
 There is a fair amount of code in the CGL library, which we will be using for future assignments. The relevant header files for this assignment are *vector2D.h*, *matrix3x3.h*, *color.h*, and *renderer.h*.
 
 Here is a very brief sketch of what happens when you launch `draw`: An `SVGParser` (in *svgparser.\**) reads in the input *svg* file(s), launches a OpenGL `Viewer` containing a `DrawRend` renderer, which enters an infinite loop and waits for input from the mouse and keyboard. DrawRend (*drawrend.\**) contains various callback functions hooked up to these events, but its main job happens inside the `DrawRend::redraw()` function. The high-level drawing work is done by the various `SVGElement` child classes (*svg.\**), which then pass their low-level point, line, and triangle rasterization data back to the three `DrawRend` rasterization functions.
 
 Here are the files you will be modifying throughout the project:
+
 1. *drawrend.cpp*, *drawrend.h*
 2. *texture.cpp*
 3. *transforms.cpp*
@@ -97,6 +101,7 @@ Notes:
 When finished, you should be able to render many more test files, including those with rectangles and polygons, since we have provided the code to break these up into triangles for you. In particular, *basic/test3.svg*, *basic/test4.svg*, and *basic/test5.svg* should all render correctly.
 
 For convenience, here is a list of functions you will need to modify:
+
 1. `DrawRend::rasterize_triangle`
 2. `SampleBuffer::fill_color`
 
@@ -120,6 +125,7 @@ We provide a `SampleBuffer` class to store the sub-pixels. Each samplebuffer ins
 Your triangle edges should be noticeably smoother when using > 1 sample per pixel! You can examine the differences closely using the pixel inspector. Also note that, it may take several seconds to switch to a higher sampling rate.
 
 For convenience, here is a list of functions you will need to modify:
+
 1. `DrawRend::rasterize_triangle`
 2. `SampleBuffer::get_pixel_color`
 
@@ -136,6 +142,7 @@ Once you've implemented these transforms, *svg/transforms/robot.svg* should rend
 <img src="/uploads/article_images/3_.jpg" width="400px" align="middle"/>
 
 For convenience, here is a list of functions you will need to modify:
+
 1. `translate`
 2. `scale`
 3. `rotate`
@@ -153,6 +160,7 @@ Familiarize yourself with the `ColorTri` struct in *svg.h*. Modify your implemen
 Implement the `ColorTri::color(...)` function in *svg.cpp* so that it interpolates the color at the point `p_bary`. This function is very simple: it does not need to make use of `p_dx_bary` or `p_dy_bary`, which are for texture mapping. Note that this `color()` function plays the role of a very primitive shader.
 
 For convenience, here is a list of functions you will need to modify:
+
 1. `DrawRend::rasterize_triangle`
 2. `ColorTri::color`
 

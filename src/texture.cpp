@@ -5,7 +5,7 @@ namespace CGL {
 
 Color Texture::sample(const SampleParams &sp) {
   // Part 5: Fill this in.
-  return Color():
+  return Color();
 }
 
 float Texture::get_level(const SampleParams &sp) {
@@ -20,7 +20,7 @@ Color Texture::sample_nearest(Vector2D uv, int level) {
 
 Color Texture::sample_bilinear(Vector2D uv, int level) {
   // Part 5: Fill this in.
-  return Color():
+  return Color();
 }
 
 Color Texture::sample_trilinear(Vector2D uv, Vector2D du, Vector2D dv) {

@@ -1,4 +1,4 @@
-<img src="/cs184_sp16_content/article_images/3_1.jpg" width="800px" align="middle"/>
+<img src="https://cs184.eecs.berkeley.edu/cs184_sp16_content/article_images/3_1.jpg" width="800px" align="middle"/>
 
 In this assignment you will implement a simple rasterizer, including features like supersampling, hierarchical transforms, and texture mapping with antialiasing. At the end, you'll have a functional vector graphics renderer that can take in modified SVG (Scalable Vector Graphics) files, which are widely used on the internet.
 
@@ -24,7 +24,7 @@ As you go through the assignment, refer to the write-up guidelines and deliverab
 
 *Note: Do not squander all your hard work on this assignment by converting your png files into jpg or any other format!* Leave the screenshots as they are saved by the `'S'` key in the GUI, otherwise you will introduce artifacts that will ruin your rasterization efforts.
 
-<img src="/cs184_sp16_content/article_images/3_7.jpg" width="800px" align="middle"/>
+<img src="https://cs184.eecs.berkeley.edu/cs184_sp16_content/article_images/3_7.jpg" width="800px" align="middle"/>
 
 ## Using the GUI
 
@@ -116,7 +116,7 @@ Use supersampling to antialias your triangles. The `sample_rate` parameter in `D
 
 The image below shows how sampling four times per pixel produces a better result than just sampling once, since some of the supersampled pixels are partially covered and will yield a smoother edge.
 
-<img src="/uploads/article_images/3_1.jpg" width="500px" align="middle"/>
+<img src="https://cs184.eecs.berkeley.edu/cs184_sp17_content/article_images/3_1.jpg" width="500px" align="middle"/>
 
 To do supersampling, each pixel is now divided into `sqrt(sample_rate) * sqrt(sample_rate)` sub-pixels. In other words, you still need to keep track of `height * width` pixels, but now each pixel has `sqrt(sample_rate) * sqrt(sample_rate)` sampled colors. You will need to do point-in-triangle tests at the center of each of these *sub-pixel* squares.
 
@@ -139,7 +139,7 @@ Implement the three transforms in the *transforms.cpp* file according to the [SV
 
 Once you've implemented these transforms, *svg/transforms/robot.svg* should render correctly, as follows:
 
-<img src="/uploads/article_images/3_.jpg" width="400px" align="middle"/>
+<img src="https://cs184.eecs.berkeley.edu/cs184_sp17_content/article_images/3_.jpg" width="400px" align="middle"/>
 
 For convenience, here is a list of functions you will need to modify:
 
@@ -164,7 +164,7 @@ For convenience, here is a list of functions you will need to modify:
 1. `DrawRend::rasterize_triangle`
 2. `ColorTri::color`
 
-<img src="/cs184_sp16_content/article_images/3_4.jpg" width="800px" align="middle"/>
+<img src="https://cs184.eecs.berkeley.edu/cs184_sp16_content/article_images/3_4.jpg" width="800px" align="middle"/>
 
 
 ### Part 5: "Pixel sampling" for texture mapping (15 pts)

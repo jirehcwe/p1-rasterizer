@@ -12,7 +12,7 @@ In this assignment you will implement a simple rasterizer, including features li
 
 You can either download the zipped assignment straight to your computer or clone it from GitHub using the command
 
-    $ git clone https://gitlab.com/cs184/proj1_rasterizer.git
+    $ git clone <YOUR_PRIVATE_REPO>
 
 Please consult this article on [how to build and submit assignments for CS 184](classarticle:7).
 
@@ -235,7 +235,7 @@ You will submit your code as well as the deliverables described in the above sec
 
 ### Project write-up guidelines and instructions
 
-We have provided a simple HTML skeleton in *index.html* found within the *website* directory to help you get started and structure your write-up.
+We have provided a simple HTML skeleton in *index.html* found within the *docs* directory to help you get started and structure your write-up.
 
 You are also welcome to create your own webpage report from scratch using your own preferred frameworks or tools. However, **please follow the same overall structure as described in the deliverables section below**.
 

@@ -5,7 +5,7 @@ In this assignment you will implement a simple rasterizer, including features li
 ## Logistics
 
 ### Deadline
-* Project 1 is due Monday, February 6th at 11:59pm. Assignments which are turned in after 11:59pm are a full day late -- there are no late minutes or late hours.
+* Project 1 is due Monday, February 5th at 11:59pm. Assignments which are turned in after 11:59pm are a full day late -- there are no late minutes or late hours.
 
 
 ### Getting started

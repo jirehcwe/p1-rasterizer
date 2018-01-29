@@ -18,7 +18,7 @@ Please consult this article on [how to build and submit assignments for CS 184](
 
 
 ### What you will turn in
-You will submit your entire project directory in a *zip* file. This should include a *website* directory containing a web-ready assignment write-up in a file *index.html*.
+You will submit your entire project directory in a *zip* file. This should include a *docs* directory containing a web-ready assignment write-up in a file *index.html*.
 
 As you go through the assignment, refer to the write-up guidelines and deliverables section below. It is recommended that you accumulate deliverables into sections in your webpage write-up as you work through the project.
 

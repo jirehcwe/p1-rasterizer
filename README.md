@@ -265,7 +265,7 @@ Give a high-level overview of what you implemented in this project. Think about 
 
 #### Part 3
 * Create an updated version of *svg/transforms/robot.svg* with cubeman doing something more interesting, like waving or running. Feel free to change his colors or proportions to suit your creativity.
-* Save your *svg* file in the *svg/my_examples/* directory and show a *png* screenshot of your rendered drawing. Explain what you were trying to do with cubeman in words.
+* Save your svg file as my_robot.svg in your docs/ directory and show a png screenshot of your rendered drawing in your write-up. Explain what you were trying to do with cubeman in words.
 
 #### Part 4
 * Explain barycentric coordinates in your own words and use an image to aid you in your explanation. One idea is to use a *svg* file that plots a single triangle with one red, one green, and one blue vertex, which should produce a smoothly blended color triangle.

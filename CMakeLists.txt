@@ -22,7 +22,7 @@ if(APPLE)
   # Clang configuration
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
-    set(CLANG_CXX_FLAGS "-std=c++11 -m64")
+    set(CLANG_CXX_FLAGS "-std=c++11 -m64 -Wfloat-conversion")
 
     if(BUILD_DEBUG)
       set(CMAKE_BUILD_TYPE Debug)
@@ -40,7 +40,7 @@ if(APPLE)
   # GCC configuration
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
-    set(GCC_CXX_FLAGS "-std=c++11 -m64")
+    set(GCC_CXX_FLAGS "-std=c++11 -m64 -Wfloat-conversion")
 
     if(BUILD_DEBUG)
       set(CMAKE_BUILD_TYPE Debug)
@@ -64,7 +64,7 @@ if(LINUX)
   # GCC only
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
-    set(GCC_CXX_FLAGS "-std=c++11 -m64")
+    set(GCC_CXX_FLAGS "-std=c++11 -m64 -Wfloat-conversion")
 
     # Debug configuration
     if(BUILD_DEBUG)
@@ -87,7 +87,7 @@ if(WIN32)
 
   if(MSVC)
 
-    set(MSVC_CXX_FLAGS "-std=c++11")
+    set(MSVC_CXX_FLAGS "-std=c++11 -Wfloat-conversion")
 
     if(BUILD_DEBUG)
         set(CMAKE_BUILD_TYPE Debug)
@@ -100,7 +100,7 @@ if(WIN32)
 
   if(MINGW)
 
-    set(MSVC_CXX_FLAGS "-std=c++11")
+    set(MSVC_CXX_FLAGS "-std=c++11 -Wfloat-conversion")
 
     if(BUILD_DEBUG)
         set(CMAKE_BUILD_TYPE Debug)

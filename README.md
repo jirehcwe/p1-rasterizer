@@ -196,7 +196,7 @@ Finally, add support for sampling different `MipMap` levels. The GUI toggles `Dr
 
 * When `lsm == L_ZERO`, you should sample from the zero-th `MipMap`, as in Part 5.
 * When `lsm == L_NEAREST`, you should compute the nearest appropriate `MipMap` level using the one-pixel difference vectors `du` and `dv` and pass that level as a parameter to the nearest or bilinear sample function.
-* When `lsm == L_LINEAR`, you should find the appropriate `MipMap` level and do full trilinear sampling by getting two bilinear samples from adjacent levels and computing a weighted sum.
+* When `lsm == L_LINEAR`, you should find the appropriate `MipMap` level and compute a weighted sum of two samples from adjacent levels.
 
 Implement `Texture::get_level` as a helper function. You will need $(\frac{du}{dx}, \frac{dv}{dx})$ and $(\frac{dv}{dx},\frac{dv}{dy})$ to calculate the correct `MipMap` level. In order to get these values corresponding to a point $p = (x,y)$ inside a triangle, you must
 

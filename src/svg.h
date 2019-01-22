@@ -40,6 +40,7 @@ struct Style {
   Color fillColor;
   float strokeWidth;
   float miterLimit;
+  bool strokeVisible;
 };
 
 struct SVGElement {

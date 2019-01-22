@@ -1,33 +1,35 @@
 #include "texture.h"
 #include "CGL/color.h"
 
+#include <cmath>
+#include <algorithm>
+
 namespace CGL {
 
 Color Texture::sample(const SampleParams &sp) {
-  // Part 5: Fill this in.
+  // Parts 5 and 6: Fill this in.
+  // Should return a color sampled based on the psm and lsm parameters given
   return Color();
 }
 
 float Texture::get_level(const SampleParams &sp) {
-  // Part 6: Fill this in.
+  // Optional helper function for Parts 5 and 6
   return 0;
 }
 
+// Returns the nearest sample given a particular level and set of uv coords
 Color Texture::sample_nearest(Vector2D uv, int level) {
-  // Part 5: Fill this in.
+  // Optional helper function for Parts 5 and 6
+  // Feel free to ignore or create your own
   return Color();
 }
 
+// Returns the bilinear sample given a particular level and set of uv coords
 Color Texture::sample_bilinear(Vector2D uv, int level) {
-  // Part 5: Fill this in.
+  // Optional helper function for Parts 5 and 6
+  // Feel free to ignore or create your own
   return Color();
 }
-
-Color Texture::sample_trilinear(Vector2D uv, Vector2D du, Vector2D dv) {
-  // Part 6: Fill this in.
-  return Color();
-}
-
 
 
 
@@ -35,20 +37,18 @@ Color Texture::sample_trilinear(Vector2D uv, Vector2D du, Vector2D dv) {
 
 
 
-inline void uint8_to_float(float dst[4], unsigned char *src) {
+inline void uint8_to_float(float dst[3], unsigned char *src) {
   uint8_t *src_uint8 = (uint8_t *)src;
   dst[0] = src_uint8[0] / 255.f;
   dst[1] = src_uint8[1] / 255.f;
   dst[2] = src_uint8[2] / 255.f;
-  dst[3] = src_uint8[3] / 255.f;
 }
 
-inline void float_to_uint8(unsigned char *dst, float src[4]) {
+inline void float_to_uint8(unsigned char *dst, float src[3]) {
   uint8_t *dst_uint8 = (uint8_t *)dst;
   dst_uint8[0] = (uint8_t)(255.f * max(0.0f, min(1.0f, src[0])));
   dst_uint8[1] = (uint8_t)(255.f * max(0.0f, min(1.0f, src[1])));
   dst_uint8[2] = (uint8_t)(255.f * max(0.0f, min(1.0f, src[2])));
-  dst_uint8[3] = (uint8_t)(255.f * max(0.0f, min(1.0f, src[3])));
 }
 
 void Texture::generate_mips(int startLevel) {
@@ -80,7 +80,7 @@ void Texture::generate_mips(int startLevel) {
 
     level.width = width;
     level.height = height;
-    level.texels = vector<unsigned char>(4 * width * height);
+    level.texels = vector<unsigned char>(3 * width * height);
   }
 
   // create mips
@@ -91,8 +91,8 @@ void Texture::generate_mips(int startLevel) {
     MipLevel &prevLevel = mipmap[mipLevel - 1];
     MipLevel &currLevel = mipmap[mipLevel];
 
-    int prevLevelPitch = prevLevel.width * 4; // 32 bit RGBA
-    int currLevelPitch = currLevel.width * 4; // 32 bit RGBA
+    int prevLevelPitch = prevLevel.width * 3; // 32 bit RGB
+    int currLevelPitch = currLevel.width * 3; // 32 bit RGB
 
     unsigned char *prevLevelMem;
     unsigned char *currLevelMem;
@@ -105,8 +105,8 @@ void Texture::generate_mips(int startLevel) {
     float hDecimal, hNorm, hWeight[3];
     int hSupport;
 
-    float result[4];
-    float input[4];
+    float result[3];
+    float input[3];
 
     // conditional differentiates no rounding case from round down case
     if (prevLevel.width & 1) {
@@ -138,18 +138,17 @@ void Texture::generate_mips(int startLevel) {
         wWeight[1] = wNorm * 1.0f;
         wWeight[2] = wNorm * wDecimal * (i + 1);
 
-        result[0] = result[1] = result[2] = result[3] = 0.0f;
+        result[0] = result[1] = result[2] = 0.0f;
 
         for (int ii = 0; ii < wSupport; ii++) {
-          uint8_to_float(input, prevLevelMem + 4 * (2 * i + ii));
+          uint8_to_float(input, prevLevelMem + 3 * (2 * i + ii));
           result[0] += wWeight[ii] * input[0];
           result[1] += wWeight[ii] * input[1];
           result[2] += wWeight[ii] * input[2];
-          result[3] += wWeight[ii] * input[3];
         }
 
         // convert back to format of the texture
-        float_to_uint8(currLevelMem + (4 * i), result);
+        float_to_uint8(currLevelMem + (3 * i), result);
       }
 
       // case 2: reduction only in vertical size (horizontal size is 1)
@@ -161,13 +160,12 @@ void Texture::generate_mips(int startLevel) {
         hWeight[1] = hNorm;
         hWeight[2] = hNorm * hDecimal * (j + 1);
 
-        result[0] = result[1] = result[2] = result[3] = 0.0f;
+        result[0] = result[1] = result[2] = 0.0f;
         for (int jj = 0; jj < hSupport; jj++) {
           uint8_to_float(input, prevLevelMem + prevLevelPitch * (2 * j + jj));
           result[0] += hWeight[jj] * input[0];
           result[1] += hWeight[jj] * input[1];
           result[2] += hWeight[jj] * input[2];
-          result[3] += hWeight[jj] * input[3];
         }
 
         // convert back to format of the texture
@@ -187,7 +185,7 @@ void Texture::generate_mips(int startLevel) {
           wWeight[1] = wNorm * 1.0f;
           wWeight[2] = wNorm * wDecimal * (i + 1);
 
-          result[0] = result[1] = result[2] = result[3] = 0.0f;
+          result[0] = result[1] = result[2] = 0.0f;
 
           // convolve source image with a trapezoidal filter.
           // in the case of no rounding this is just a box filter of width 2.
@@ -197,15 +195,14 @@ void Texture::generate_mips(int startLevel) {
               float weight = hWeight[jj] * wWeight[ii];
               uint8_to_float(input, prevLevelMem +
                                         prevLevelPitch * (2 * j + jj) +
-                                        4 * (2 * i + ii));
+                                        3 * (2 * i + ii));
               result[0] += weight * input[0];
               result[1] += weight * input[1];
               result[2] += weight * input[2];
-              result[3] += weight * input[3];
             }
 
           // convert back to format of the texture
-          float_to_uint8(currLevelMem + currLevelPitch * j + 4 * i, result);
+          float_to_uint8(currLevelMem + currLevelPitch * j + 3 * i, result);
         }
       }
     }

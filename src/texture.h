@@ -26,7 +26,10 @@ static const int kMaxMipLevels = 14;
 struct MipLevel {
 	size_t width;
 	size_t height;
+  // RGB color values
   std::vector<unsigned char> texels;
+
+  Color get_texel(int tx, int ty);
 };
 
 struct Texture {
@@ -54,8 +57,6 @@ struct Texture {
   Color sample_nearest(Vector2D uv, int level = 0);
 
   Color sample_bilinear(Vector2D uv, int level = 0);
-
-  Color sample_trilinear(Vector2D uv, Vector2D du, Vector2D dv);
 };
 
 }

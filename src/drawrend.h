@@ -97,12 +97,13 @@ private:
     SampleBuffer(size_t sps): samples_per_side(sps) {
       clear();
     }
-
+    
+    // Fill the subpixel at i,j with the Color c
     void fill_color(int i, int j, Color c) {
       PixelColorStorage &p = sub_pixels[i][j];
       // Part 1: Overwrite PixelColorStorage p using Color c.
       //         Pay attention to different data types.
-
+      return;
     }
 
     void fill_pixel(Color c) {
@@ -114,19 +115,18 @@ private:
     Color get_pixel_color() {
       return Color(sub_pixels[0][0].data());
       // Part 2: Implement get_pixel_color() for supersampling.
-
     }
-
+    
     void clear() {
       if (sub_pixels.size() == samples_per_side) {
         for (int i = 0; i < samples_per_side; ++i)
           for (int j = 0; j < samples_per_side; ++j)
-            sub_pixels[i][j].assign(4, (unsigned char)255);
+            sub_pixels[i][j].assign(3, (unsigned char)255);
         return;
       }
 
       sub_pixels.clear();
-      PixelColorStorage white = std::vector<unsigned char>(4, 255);
+      PixelColorStorage white = std::vector<unsigned char>(3, 255);
       std::vector<PixelColorStorage> row;
       row.reserve(samples_per_side);
       for (int i = 0; i < samples_per_side; ++i)
@@ -146,8 +146,8 @@ private:
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         Color col = samplebuffer[y][x].get_pixel_color();
-        for (int k = 0; k < 4; ++k) {
-          framebuffer[4 * (y * width + x) + k] = (&col.r)[k] * 255;
+        for (int k = 0; k < 3; ++k) {
+          framebuffer[3 * (y * width + x) + k] = (&col.r)[k] * 255;
         }
       }
     }

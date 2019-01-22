@@ -60,7 +60,6 @@ Color ColorTri::color(Vector3D p_bary, Vector3D p_dx_bary, Vector3D p_dy_bary, S
 Color TexTri::color(Vector3D p_bary, Vector3D p_dx_bary, Vector3D p_dy_bary, SampleParams sp) {
   // Part 5: Fill this in with bilinear sampling.
   // Part 6: Fill this in with trilinear sampling as well.
-
   return Color();
 }
 
@@ -81,7 +80,9 @@ void Line::draw(DrawRend *dr, Matrix3x3 global_transform) {
   global_transform = global_transform * transform;
 
   Vector2D f = global_transform * from, t = global_transform * to;
-  dr->rasterize_line(f.x, f.y, t.x, t.y, style.strokeColor);
+  if (style.strokeVisible) {
+    dr->rasterize_line(f.x, f.y, t.x, t.y, style.strokeColor);
+  }
 }
 
 void Polyline::draw(DrawRend *dr, Matrix3x3 global_transform) {
@@ -89,13 +90,11 @@ void Polyline::draw(DrawRend *dr, Matrix3x3 global_transform) {
 
   Color c = style.strokeColor;
 
-  if( c.a != 0 ) {
-    int nPoints = points.size();
-    for( int i = 0; i < nPoints - 1; i++ ) {
-      Vector2D p0 = global_transform * points[(i+0) % nPoints];
-      Vector2D p1 = global_transform * points[(i+1) % nPoints];
-      dr->rasterize_line( p0.x, p0.y, p1.x, p1.y, c );
-    }
+  int nPoints = points.size();
+  for( int i = 0; i < nPoints - 1; i++ ) {
+    Vector2D p0 = global_transform * points[(i+0) % nPoints];
+    Vector2D p1 = global_transform * points[(i+1) % nPoints];
+    dr->rasterize_line( p0.x, p0.y, p1.x, p1.y, c );
   }
 }
 
@@ -115,14 +114,12 @@ void Rect::draw(DrawRend *dr, Matrix3x3 global_transform) {
 
   // draw fill
   c = style.fillColor;
-  if (c.a != 0 ) {
-    dr->rasterize_triangle( p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, c );
-    dr->rasterize_triangle( p2.x, p2.y, p1.x, p1.y, p3.x, p3.y, c );
-  }
+  dr->rasterize_triangle( p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, c );
+  dr->rasterize_triangle( p2.x, p2.y, p1.x, p1.y, p3.x, p3.y, c );
 
   // draw outline
-  c = style.strokeColor;
-  if( c.a != 0 ) {
+  if (style.strokeVisible) {
+    c = style.strokeColor;
     dr->rasterize_line( p0.x, p0.y, p1.x, p1.y, c );
     dr->rasterize_line( p1.x, p1.y, p3.x, p3.y, c );
     dr->rasterize_line( p3.x, p3.y, p2.x, p2.y, c );
@@ -137,24 +134,22 @@ void Polygon::draw(DrawRend *dr, Matrix3x3 global_transform) {
 
   // draw fill
   c = style.fillColor;
-  if( c.a != 0 ) {
 
-    // triangulate
-    std::vector<Vector2D> triangles;
-    triangulate( *this, triangles );
+  // triangulate
+  std::vector<Vector2D> triangles;
+  triangulate( *this, triangles );
 
-    // draw as triangles
-    for (size_t i = 0; i < triangles.size(); i += 3) {
-      Vector2D p0 = global_transform * triangles[i + 0];
-      Vector2D p1 = global_transform * triangles[i + 1];
-      Vector2D p2 = global_transform * triangles[i + 2];
-      dr->rasterize_triangle( p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, c );
-    }
+  // draw as triangles
+  for (size_t i = 0; i < triangles.size(); i += 3) {
+    Vector2D p0 = global_transform * triangles[i + 0];
+    Vector2D p1 = global_transform * triangles[i + 1];
+    Vector2D p2 = global_transform * triangles[i + 2];
+    dr->rasterize_triangle( p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, c );
   }
 
   // draw outline
-  c = style.strokeColor;
-  if( c.a != 0 ) {
+  if (style.strokeVisible) {
+    c = style.strokeColor;
     int nPoints = points.size();
     for( int i = 0; i < nPoints; i++ ) {
       Vector2D p0 = global_transform * points[(i+0) % nPoints];

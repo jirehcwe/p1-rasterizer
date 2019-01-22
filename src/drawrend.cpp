@@ -267,7 +267,23 @@ void DrawRend::write_screenshot() {
  *
  */
 void DrawRend::write_framebuffer() {
-  if (lodepng::encode("test.png", &framebuffer[0], width, height))
+  // lodepng expects alpha channel, so we will just make a new vector with
+  // alpha included
+  
+  std::vector<unsigned char> export_data;
+  
+  export_data.reserve(width * height * 4);
+  
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      for (int k = 0; k < 3; ++k) {
+        export_data.push_back(framebuffer[3 * (y * width + x) + k]);
+      }
+      export_data.push_back(255); // Opaque alpha
+    }
+  }
+  
+  if (lodepng::encode("test.png", export_data.data(), width, height))
     cerr << "Could not write framebuffer" << endl;
   else
     cerr << "Succesfully wrote framebuffer" << endl;
@@ -324,7 +340,7 @@ void DrawRend::draw_pixels() {
 
   glRasterPos2f(0, 0);
   glPixelZoom( 1.0, -1.0 );
-  glDrawPixels( width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels );
+  glDrawPixels( width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels );
   glPixelZoom( 1.0, 1.0 );
 
   glPopAttrib();

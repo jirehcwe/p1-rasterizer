@@ -82,7 +82,8 @@ void triangulate(const Polygon& polygon, vector<Vector2D>& triangles) {
   int n = contour.size();
   if ( n < 3 ) return;
 
-  int V[n];
+  vector<int> V(n);
+  // int V[n];
 
   // we want a counter-clockwise polygon in V
   if ( 0.0f < area(contour) ) {
@@ -109,7 +110,7 @@ void triangulate(const Polygon& polygon, vector<Vector2D>& triangles) {
     v = u + 1     ; if (nv <= v) v = 0;      // new v   
     int w = v + 1 ; if (nv <= w) w = 0;      // next    
 
-    if ( snip(contour,u,v,w,nv,V) ) {
+    if ( snip(contour,u,v,w,nv,&V[0]) ) {
 
       int a,b,c,s,t;
 

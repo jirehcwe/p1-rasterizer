@@ -29,8 +29,10 @@ int SVGParser::load( const char* filename, SVG* svg ) {
   }
   in.close();
 
-  string path(realpath(filename,NULL));
+  //string path(realpath(filename,NULL));
+  string path = resolve_path(filename);
   dir = path.substr(0,path.find_last_of("/\\")) + "/";
+  cerr << "!!! JRK: Resolved directory '" << dir << "' !!!\n";
 
   XMLDocument doc;
   doc.LoadFile( filename );
@@ -154,17 +156,19 @@ void SVGParser::parseElement( XMLElement* xml, SVGElement* element ) {
   const char* fill = xml->Attribute( "fill" );
   if( fill ) style->fillColor = Color::fromHex( fill );
 
-  const char* fill_opacity = xml->Attribute( "fill-opacity" );
-  if( fill_opacity ) style->fillColor.a = atof( fill_opacity );
+  //const char* fill_opacity = xml->Attribute( "fill-opacity" );
+  //if( fill_opacity ) style->fillColor.a = atof( fill_opacity );
 
   const char* stroke = xml->Attribute( "stroke" );
-  const char* stroke_opacity = xml->Attribute( "stroke-opacity" );
+  //const char* stroke_opacity = xml->Attribute( "stroke-opacity" );
   if( stroke ) {
     style->strokeColor = Color::fromHex( stroke );
-    if( stroke_opacity ) style->strokeColor.a = atof( stroke_opacity );
+    style->strokeVisible = true;
+    //if( stroke_opacity ) style->strokeColor.a = atof( stroke_opacity );
   } else {
     style->strokeColor = Color::Black;
-    style->strokeColor.a = 0;
+    style->strokeVisible = false;
+    //style->strokeColor.a = 0;
   }
 
 
@@ -271,8 +275,18 @@ void SVGParser::parseTexture( XMLElement* xml ) {
     return;
   }
 
+  // Strip the alpha channel
+  vector<unsigned char> pixels_no_alpha;
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      for (int k = 0; k < 3; ++k) {
+        pixels_no_alpha.push_back(pixels[4 * (y * width + x) + k]);
+      }
+    }
+  }
+
   Texture *tex = new Texture();
-  tex->init(pixels, width, height);
+  tex->init(pixels_no_alpha, width, height);
   curr_svg->textures[texid] = tex;
 
 }
@@ -352,11 +366,21 @@ void SVGParser::parseImage( XMLElement* xml, Image* image ) {
   // load into png
   // PNG png; PNGParser::load(buffer, size, png);
   
+  // Strip the alpha channel
+  vector<unsigned char> pixels_no_alpha;
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      for (int k = 0; k < 3; ++k) {
+        pixels_no_alpha.push_back(pixels[4 * (y * width + x) + k]);
+      }
+    }
+  }
+  
   // create bitmap texture from png (mip level 0)
   MipLevel mip_start;
   mip_start.width  = width;
   mip_start.height = height;
-  mip_start.texels = pixels;
+  mip_start.texels = pixels_no_alpha;
 
   // add to svg
   image->tex.width  = mip_start.width;
@@ -470,9 +494,10 @@ void SVGParser::parseColorTri( XMLElement* xml, ColorTri* ctri ) {
   stringstream colors (xml->Attribute( "colors" ));
 
   float r,g,b,a;
-  colors >> r >> g >> b >> a; ctri->p0_col = Color(r,g,b,a);
-  colors >> r >> g >> b >> a; ctri->p1_col = Color(r,g,b,a);
-  colors >> r >> g >> b >> a; ctri->p2_col = Color(r,g,b,a);
+  // Alpha removed
+  colors >> r >> g >> b >> a; ctri->p0_col = Color(r,g,b);
+  colors >> r >> g >> b >> a; ctri->p1_col = Color(r,g,b);
+  colors >> r >> g >> b >> a; ctri->p2_col = Color(r,g,b);
 
 }
 

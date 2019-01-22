@@ -13,6 +13,13 @@ set(APPLICATION_SOURCE
     drawrend.cpp
     svg.cpp
     main.cpp
+    # Add headers for the sake of Xcode/Visual Studio projects
+    drawrend.h
+    svg.h
+    svgparser.h
+    texture.h
+    transforms.h
+    triangulation.h
 )
 
 #-------------------------------------------------------------------------------
@@ -25,6 +32,10 @@ include_directories(
   ${FREETYPE_INCLUDE_DIRS}
 )
 
+if (WIN32)
+    include_directories(dirent)
+endif(WIN32)
+
 #-------------------------------------------------------------------------------
 # Set link directories
 #-------------------------------------------------------------------------------
@@ -34,6 +45,10 @@ link_directories(
   ${CGL_LIBRARY_DIRS}
   ${FREETYPE_LIBRARY_DIRS}
 )
+
+if (WIN32)
+    list(APPEND APPLICATION_SOURCE dirent/dirent.c)
+endif(WIN32)
 
 #-------------------------------------------------------------------------------
 # Add executable

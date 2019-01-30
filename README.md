@@ -63,7 +63,7 @@ If you load a directory with up to 9 files, you can switch between them using th
 
 The project has 7 parts, divided into 3 sections, worth a total of 100 possible points. Some require only a few lines of code, while others are more substantial.
 
-**Section I: Rasterization (suggested completion checkpoint: TODO)**
+**Section I: Rasterization (suggested completion checkpoint: Tuesday, Feb 5)**
 
 * Part 1: Rasterizing single-color triangles (20 pts)
 * Part 2: Antialiasing triangles (20 pts)

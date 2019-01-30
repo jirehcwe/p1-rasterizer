@@ -32,7 +32,6 @@ int SVGParser::load( const char* filename, SVG* svg ) {
   //string path(realpath(filename,NULL));
   string path = resolve_path(filename);
   dir = path.substr(0,path.find_last_of("/\\")) + "/";
-  cerr << "!!! JRK: Resolved directory '" << dir << "' !!!\n";
 
   XMLDocument doc;
   doc.LoadFile( filename );

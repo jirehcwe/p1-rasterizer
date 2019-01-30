@@ -78,7 +78,7 @@ class Spectrum {
   }
 
   inline Color toColor() const {
-    return Color(r, g, b); 
+    return Color(r, g, b, 1); 
   }
 
   inline float illum() const { 
@@ -86,7 +86,7 @@ class Spectrum {
   }
 
   static Spectrum fromColor(const Color &c) {
-    return Spectrum(c.r, c.g, c.b);
+    return Spectrum(c.a * c.r, c.a * c.g, c.a * c.b);
   }
 
 

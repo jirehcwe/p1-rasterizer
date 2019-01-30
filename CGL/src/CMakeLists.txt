@@ -17,12 +17,11 @@ set(CGL_SOURCE
     color.cpp
     spectrum.cpp
     osdtext.cpp
-    osdfont.cpp
+    osdfont.c
     viewer.cpp
     base64.cpp
     lodepng.cpp
     tinyxml2.cpp
-    path.cpp
 )
 
 #-------------------------------------------------------------------------------
@@ -88,7 +87,8 @@ endif(APPLE)
 ##################
 # Build on Linux #
 ##################
-if(UNIX AND NOT APPLE)
+set(LINUX UNIX AND NOT APPLE)
+if(LINUX)
   if(CGL_BUILD_DEBUG)
     set_target_properties(CGL PROPERTIES OUTPUT_NAME CGL_d)
     if(CGL_BUILD_SHARED)
@@ -100,7 +100,7 @@ if(UNIX AND NOT APPLE)
       set_target_properties(CGL_SHARED PROPERTIES OUTPUT_NAME CGL)
     endif()
   endif(CGL_BUILD_DEBUG)
-endif()
+endif(LINUX)
 
 ####################
 # Build on Windows #

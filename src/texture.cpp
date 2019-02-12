@@ -9,26 +9,136 @@ namespace CGL {
 Color Texture::sample(const SampleParams &sp) {
   // Parts 5 and 6: Fill this in.
   // Should return a color sampled based on the psm and lsm parameters given
-  return Color();
+  if (sp.psm == P_NEAREST){
+    return sample_nearest(sp.p_uv, get_level(sp));
+  } else if (sp.psm == P_LINEAR){
+    //Defaults to bilinear if level is integer
+    return sample_trilinear(sp.p_uv, get_level(sp));
+  } else return Color(1, 0, 0);
 }
 
 float Texture::get_level(const SampleParams &sp) {
-  // Optional helper function for Parts 5 and 6
-  return 0;
+  if (sp.lsm == L_ZERO){
+    //Use original texture
+    return 0;
+  } else {
+    Vector2D dx = width*(sp.p_dx_uv - sp.p_uv);
+
+    Vector2D dy = height*(sp.p_dy_uv - sp.p_uv);
+
+    float level = log2(max(sqrt(pow(dx[0] , 2)+pow(dx[1] , 2)), sqrt(pow(dy[0] , 2)+pow(dy[1], 2))));
+    float clampedlevel = (float)clamp(level, 0.f, (float)mipmap.max_size());
+
+    if (sp.lsm == L_NEAREST){
+      //Find nearest mipmap level
+
+      int rounded = (int)floorf(clampedlevel);
+      return ((clampedlevel - rounded) < 0.5) ? clampedlevel: (clampedlevel+1);
+    } else {
+      //Return float value of mipmap level for linear interpolation between mipmap values
+      return clampedlevel;
+    } 
+  }
 }
 
 // Returns the nearest sample given a particular level and set of uv coords
-Color Texture::sample_nearest(Vector2D uv, int level) {
+Color Texture::sample_nearest(Vector2D uv, float level) {
   // Optional helper function for Parts 5 and 6
   // Feel free to ignore or create your own
-  return Color();
+
+  int intlevel = (int)floorf(level);
+  int mipmapOffset = level - intlevel;
+
+  int u00x = clamp((int)floorf((mipmap[intlevel].width-1)*uv.x), 0, (int)mipmap[intlevel].width-1);
+  int u00y = clamp((int)floorf((mipmap[intlevel].height-1)*uv.y), 0, (int)mipmap[intlevel].height-1);
+
+  float offsetS = (mipmap[intlevel].width-1)*uv.x-u00x;
+  float offsetT = (mipmap[intlevel].height-1)*uv.y-u00y;
+  
+  int texelX = (offsetS < 0.5f)? u00x : (u00x+1);
+  int texelY = (offsetT < 0.5f)? u00y : (u00y+1);
+
+  
+  Color texCol = mipmap[intlevel].get_texel( texelX , texelY ) ;
+  return texCol;
 }
 
 // Returns the bilinear sample given a particular level and set of uv coords
-Color Texture::sample_bilinear(Vector2D uv, int level) {
+Color Texture::sample_bilinear(Vector2D uv, float level) {
   // Optional helper function for Parts 5 and 6
   // Feel free to ignore or create your own
-  return Color();
+
+
+
+  int intlevel = (int)floorf(level);
+  int mipmapOffset = level - intlevel;
+
+  int currentMapWidth = mipmap[intlevel].width;
+  int currentMapHeight = mipmap[intlevel].height;
+
+  int u00x = (int)floorf(currentMapWidth*uv.x);
+  int u00y = (int)floorf(currentMapHeight*uv.y);
+
+  if (u00x < 0){
+    u00x = 0;
+  }
+
+  if (u00y < 0){
+    u00y = 0;
+  }
+
+  if (u00x > currentMapWidth){
+    u00x = currentMapWidth;
+  }
+
+  if (u00y > currentMapHeight){
+    u00y = currentMapHeight;
+  }
+
+  
+
+  float offsetS = currentMapWidth*uv.x-u00x;
+  float offsetT = currentMapHeight*uv.y-u00y;
+
+  // cout << u00x << " and " << u00y << "map width " << currentMapWidth << " height: " << currentMapHeight << endl;
+  Color u00 = mipmap[intlevel].get_texel(u00x, u00y);
+
+  int yclamp01 = clamp(u00y+1, 0, currentMapHeight-1);
+  Color u01 = mipmap[intlevel].get_texel(u00x, yclamp01);
+
+  int xclamp10 = clamp(u00x+1, 0, currentMapWidth-1);
+  Color u10 = mipmap[intlevel].get_texel(xclamp10 , u00y);
+
+  int xclamp11 = clamp(u00x+1, 0, currentMapWidth-1);
+  int yclamp11 = clamp(u00y+1, 0, currentMapHeight-1);
+  Color u11 = mipmap[intlevel].get_texel( xclamp11 , yclamp11);
+  
+  Color interpol = lerp(offsetT, lerp(offsetS, u00, u01), lerp(offsetS, u10, u11));
+
+  return interpol;
+}
+
+Color Texture::sample_trilinear(Vector2D uv, float level){
+
+  int intlevel = (int)floorf(level);
+  int mipmapOffset = level - intlevel;
+
+  Color interpol1 = sample_bilinear(uv, intlevel);
+
+  if (mipmapOffset < 0.005f){
+    return interpol1;
+  } else {
+    return lerp(mipmapOffset, interpol1, sample_bilinear(uv, intlevel +1));
+  }
+}
+
+Color Texture::lerp(float val, Color start, Color end){
+
+  float r = start.r + val*(end.r-end.r);
+  float g = start.g + val*(end.g-end.g);
+  float b = start.b + val*(end.b-end.b);
+
+  return Color(r, g, b);
 }
 
 

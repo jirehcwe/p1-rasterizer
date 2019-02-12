@@ -85,6 +85,8 @@ struct ColorTri : Triangle {
   // Per-vertex colors. Should be interpolated between using 
   // barycentric coordinates.
   Color p0_col, p1_col, p2_col;
+
+  
 };
 
 struct TexTri : Triangle {

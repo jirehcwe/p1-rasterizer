@@ -501,18 +501,201 @@ void DrawRend::rasterize_triangle( float x0, float y0,
   //         rasterized points and lines, then start rasterizing triangles.
   //         Use something like this:
   //             samplebuffer[row][column].fill_pixel(color);
+  
+  //=============PART 1============//
+
+  //Find bounding box:
+
+  // float intermedMaxX = max(x0, x1);
+  // float maxX = max(intermedMaxX, x2);
+
+  // float intermedMaxY = max(y0, y1);
+  // float maxY = max(intermedMaxY, y2);
+
+  // float intermedMinX = min(x0, x1);
+  // float minX = min(intermedMinX, x2);
+
+  // float intermedMinY = min(y0, y1);
+  // float minY = min(intermedMinY, y2);
+
+  // //Optimizer variables
+
+  // bool exitedTriangle;
+  // bool enteredTriangle;
+
+  // //Iterate over pixels in bounding box:
+  // for (int row = minY; row < maxY; row++){
+
+  //   //Efficiency hacks
+  //     enteredTriangle = false;
+
+  //   for (int column = minX; column < maxX; column++){
+      
+  //     //Supersampling
+
+      
+
+  //     //Use new function to check line bounds for point
+  //     bool L1 = CheckLineBounds(x0, x1, y0, y1, column + 0.5f, row + 0.5f);
+  //     bool L2 = CheckLineBounds(x1, x2, y1, y2, column + 0.5f, row + 0.5f);
+  //     bool L3 = CheckLineBounds(x2, x0, y2, y0, column + 0.5f, row + 0.5f);
+
+  //     if (L1 && L2 && L3){
+  //       samplebuffer[row][column].fill_pixel(color);
+  //       enteredTriangle = true;
+  //     } 
+      
+  //     else if (enteredTriangle == true && !(L1 && L2 && L3)){
+  //       //Exited triangle, no sense to continue
+  //       break;
+  //     }
+
+  //   }
+  // }
+
+
+  //==============PART 1===============//
+
   // Part 2: Add supersampling.
   //         You need to write color to each sub-pixel by yourself,
   //         instead of using the fill_pixel() function.
   //         Hint: Use the fill_color() function like this:
   //             samplebuffer[row][column].fill_color(sub_row, sub_column, color);
   //         You also need to implement get_pixel_color() function to support supersampling.
+
+  //==============PART 2 & 4===============//
+
+  // Find bounding box:
+
+  float intermedMaxX = max(x0, x1);
+  float maxX = max(intermedMaxX, x2);
+
+  float intermedMaxY = max(y0, y1);
+  float maxY = max(intermedMaxY, y2);
+
+  float intermedMinX = min(x0, x1);
+  float minX = min(intermedMinX, x2);
+
+  float intermedMinY = min(y0, y1);
+  float minY = min(intermedMinY, y2);
+
+  float subpixelDist = 1/sample_rate;
+
+  float sample_side = sqrt(sample_rate);
+
+  bool triIsNull = (tri == NULL);
+
+  //Iterate over pixels in bounding box:
+  for (int row = minY; row < maxY; row++){
+
+    for (int column = minX; column < maxX; column++){
+      
+      //Iterating over each subpixel for PART 2 (supersampling) or PART 4(barycentric)
+
+      for (int subpixelX = 0; subpixelX < sample_side; subpixelX++){
+      
+        for (int subpixelY = 0; subpixelY < sample_side; subpixelY++){
+
+          float subpixelXpos = column + subpixelX/sample_side + 1/(2 * sample_side);
+          float subpixelYpos = row + subpixelY/sample_side + 1/(2 * sample_side);
+          
+            //Supersampling
+
+            // bool L1 = CheckLineBounds(x0, x1, y0, y1, subpixelXpos, subpixelYpos);
+            // bool L2 = CheckLineBounds(x1, x2, y1, y2, subpixelXpos, subpixelYpos);
+            // bool L3 = CheckLineBounds(x2, x0, y2, y0, subpixelXpos, subpixelYpos);
+
+            bool inside = PointInTriangleTest(x0, y0, x1, y1, x2, y2, subpixelXpos, subpixelYpos);
+
+            if (inside){
+
+              if(!triIsNull){
+                  //Barycentric calculations for subpixel values                  
+                  Vector3D barycentricCoords = CalculateBarycentricCoords(x0, y0, x1, y1, x2, y2, subpixelXpos, subpixelYpos);
+
+                  //Part 4: No texture sampling
+                  // samplebuffer[row][column].fill_color(subpixelY, subpixelX, tri->color(Vector3D(alpha, beta, gamma)));
+
+                  //Part 5: Texture Mapping
+
+                  SampleParams sp = SampleParams();
+                  sp.psm = psm;
+                  sp.lsm = lsm;
+
+                  //Part 6: Mipmapping
+
+                  Vector3D p_dxbary = CalculateBarycentricCoords(x0, y0, x1, y1, x2, y2, 1 + subpixelXpos, subpixelYpos);
+                  Vector3D p_dybary = CalculateBarycentricCoords(x0, y0, x1, y1, x2, y2, subpixelXpos, subpixelYpos + 1);
+
+                  Color barycentricDerived = tri->color(barycentricCoords, p_dxbary, p_dybary, sp);
+
+                  samplebuffer[row][column].fill_color(subpixelY, subpixelX, barycentricDerived);
+
+              } else{
+
+                samplebuffer[row][column].fill_color(subpixelY, subpixelX, color);
+
+              }       
+            }
+          
+          
+
+        }
+
+      }
+
+    }
+
+  }
+
+}
+  
+      
+
+  //==============PART 2 & 4===============//
+
   // Part 4: Add barycentric coordinates and use tri->color for shading when available.
+
+
   // Part 5: Fill in the SampleParams struct and pass it to the tri->color function.
   // Part 6: Pass in correct barycentric differentials to tri->color for mipmapping.
 
 
-}
+  bool DrawRend::CheckLineBounds(float x0, float x1, float y0, float y1, float px, float py){
+    float xgrad = x1-x0;
+    float ygrad = y1-y0;
+
+    float value = -(px - x0)*ygrad + (py - y0)*xgrad;
+
+    return (value >= 0) ? true : false;
+  }
+
+  bool DrawRend::PointInTriangleTest(float x0, float y0, float x1, float y1, float x2, float y2, float px, float py){
+    Vector2D points[3] = {Vector2D(x0, y0), Vector2D(x1, y1), Vector2D(x2, y2)};
+    Vector2D testpoint = Vector2D(px, py);
+    
+    float xgrad[3] = {x1-x0, x2-x1, x0-x2};
+    float ygrad[3] = {y1-y0, y2-y1, y0-y2};
+    float value[3] = {-(testpoint.x - x0)*ygrad[0] + (testpoint.y - y0)*xgrad[0],
+                      -(testpoint.x - x1)*ygrad[1] + (testpoint.y - y1)*xgrad[1],
+                      -(testpoint.x - x2)*ygrad[2] + (testpoint.y - y2)*xgrad[2],
+                      };
+    
+    if ((value[0] >= 0 && value[1] >= 0 && value[2] >= 0 )|| (value[0] <= 0 && value[1] <= 0 && value[2] <= 0 )){
+      return true;
+    } else return false;
+  }
+
+  Vector3D DrawRend::CalculateBarycentricCoords(float x0, float y0, float x1, float y1, float x2, float y2, float px, float py){
+    double alpha, beta, gamma;
+    alpha = (-(px - x1)*(y2 - y1) + (py - y1)*(x2 - x1)) /
+              (-(x0 - x1)*(y2 - y1) + (y0 - y1)*(x2 - x1));
+    beta =  (-(px - x2)*(y0 - y2) + (py - y2)*(x0 - x2)) /
+              (-(x1 - x2)*(y0 - y2) + (y1 - y2)*(x0 - x2));
+    gamma = (double)1 - alpha - beta;
+
+    return Vector3D(alpha, beta, gamma);
+  }
 
 
 

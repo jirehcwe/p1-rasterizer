@@ -62,7 +62,11 @@ class DrawRend : public Renderer {
                            float x2, float y2,
                            Color color, Triangle *tri = NULL );
 
+  Vector3D CalculateBarycentricCoords(float x0, float y0, float x1, float y1, float x2, float y2, float px, float py);
 
+  bool CheckLineBounds(float x0, float x1, float y0, float y1, float px, float py);
+
+  bool PointInTriangleTest(float x0, float y0, float x1, float y1, float x2, float y2, float px, float py);
 
 private:
   // Global state variables for SVGs, pixels, and view transforms
@@ -101,8 +105,9 @@ private:
     // Fill the subpixel at i,j with the Color c
     void fill_color(int i, int j, Color c) {
       PixelColorStorage &p = sub_pixels[i][j];
-      // Part 1: Overwrite PixelColorStorage p using Color c.
-      //         Pay attention to different data types.
+      p[0] = (c.r * 255);
+      p[1] = (c.g * 255);
+      p[2] = (c.b * 255);
       return;
     }
 
@@ -113,7 +118,25 @@ private:
     }
 
     Color get_pixel_color() {
-      return Color(sub_pixels[0][0].data());
+      float sum[3] = {0, 0, 0};
+      float count = 0;
+
+      for (int i = 0; i < samples_per_side;i++){
+        for (int j = 0; j < samples_per_side;j++){
+          for (int k = 0; k < 3; k++){
+              sum[k] += (float)sub_pixels[i][j].data()[k];
+          }
+          count++;
+        }
+      }
+
+      for (int k = 0; k < 3;k++){
+        sum[k] = sum[k]/count;  
+      }
+
+      Color average = Color(sum[0]/255, sum[1]/255, sum[2]/255);
+            
+      return average;
       // Part 2: Implement get_pixel_color() for supersampling.
     }
     
@@ -135,6 +158,8 @@ private:
       for (int i = 0; i < samples_per_side; ++i)
         sub_pixels.push_back(row);
     }
+
+
   };
 
   std::vector<std::vector<SampleBuffer> > samplebuffer;

@@ -540,7 +540,7 @@ void DrawRend::rasterize_triangle( float x0, float y0,
   //     bool L2 = CheckLineBounds(x1, x2, y1, y2, column + 0.5f, row + 0.5f);
   //     bool L3 = CheckLineBounds(x2, x0, y2, y0, column + 0.5f, row + 0.5f);
 
-  //     if (L1 && L2 && L3){
+  //     if (L1 && L2  && L3){
   //       samplebuffer[row][column].fill_pixel(color);
   //       enteredTriangle = true;
   //     } 
@@ -601,7 +601,7 @@ void DrawRend::rasterize_triangle( float x0, float y0,
           
             //Supersampling
 
-            // bool L1 = CheckLineBounds(x0, x1, y0, y1, subpixelXpos, subpixelYpos);
+            // bool L1 = CheckLinfileBounds(x0, x1, y0, y1, subpixelXpos, subpixelYpos);
             // bool L2 = CheckLineBounds(x1, x2, y1, y2, subpixelXpos, subpixelYpos);
             // bool L3 = CheckLineBounds(x2, x0, y2, y0, subpixelXpos, subpixelYpos);
 
